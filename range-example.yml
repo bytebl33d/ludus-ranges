@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=https://docs.ludus.cloud/schemas/range-config.json
+
+ludus:
+  - vm_name: "{{ range_id }}-DC01-2025"
+    hostname: "{{ range_id }}-DC01"
+    template: win2025-server-x64-tpm-template
+    vlan: 10
+    ip_last_octet: 100
+    ram_gb: 8
+    cpus: 4
+    windows:
+      sysprep: false
+    domain:
+      fqdn: cicada.domain
+      role: primary-dc
+  - vm_name: "{{ range_id }}-WS01-11"
+    hostname: "{{ range_id }}-WS01"
+    template: win11-24h2-x64-enterprise-tpm-template
+    vlan: 10
+    ip_last_octet: 10
+    ram_gb: 8
+    cpus: 4
+    domain:
+      fqdn: cicada.domain
+      role: member
+    windows:
+      sysprep: false
+    roles:
+      - p4t12ick.ludus_ar_windows
+    role_vars:
+      ludus_ar_windows_splunk_ip: "10.3.10.1"
+
+  - vm_name: "{{ range_id }}-WEB01-ubuntu24"
+    hostname: "{{ range_id }}-WEB01"
+    template: ubuntu-24.04-x64-server-template
+    vlan: 20
+    ip_last_octet: 10
+    ram_gb: 4
+    cpus: 2
+    linux: true
+    testing:
+      snapshot: false
+      block_internet: false
+    roles:
+      - p4t12ick.ludus_ar_linux
+    role_vars:
+      ludus_ar_linux_splunk_ip: "10.3.10.1"
+
+  - vm_name: "{{ range_id }}-splunk"
+    hostname: "{{ range_id }}-splunk"
+    template: ubuntu-24.04-x64-server-template
+    vlan: 10
+    ip_last_octet: 1
+    ram_gb: 16
+    cpus: 4
+    linux: true
+    roles:
+      - p4t12ick.ludus_ar_splunk
+
+router:
+  vm_name: "{{ range_id }}-router-debian12-x64"
+  hostname: "{{ range_id }}-router"
+  template: debian-12-x64-server-template
+  ram_gb: 2
+  ram_min_gb: 1
+  cpus: 2
+
+network:
+  inter_vlan_default: REJECT
+  always_blocked_networks: 192.168.128.0/23
+  rules:
+    - name: Only allow windows to web01 on 443
+      vlan_src: 10
+      vlan_dst: 20
+      protocol: tcp
+      ports: 443
+      action: ACCEPT
+    - name: Only allow windows to web01 on 80
+      vlan_src: 10
+      vlan_dst: 20
+      protocol: tcp
+      ports: 80
+      action: ACCEPT
+    - name: Only allow windows to web01 on 8080
+      vlan_src: 10
+      vlan_dst: 20
+      protocol: tcp
+      ports: 8080
+      action: ACCEPT
+    - name: Allow web01 to all
+      vlan_src: 20
+      vlan_dst: 10
+      protocol: all
+      ports: all
+      action: ACCEPT
+
+defaults:
+  snapshot_with_RAM: true
+  stale_hours: 0
+  ad_domain_functional_level: Win2025
+  ad_forest_functional_level: Win2025
+  ad_domain_admin: domainadmin
+  ad_domain_admin_password: V3ryStr0ngAdm!nP@ss#
+  ad_domain_user: domainuser
+  ad_domain_user_password: P@ssw0rd123
+  ad_domain_safe_mode_password: password
+  timezone: Europe/Brussels
+  enable_dynamic_wallpaper: true
