@@ -94,9 +94,13 @@
         },
         "pm01" : {
             "hostname" : "pm01",
-            "type" : "linux_server",
+            "type" : "linux_domain",
             "domain" : "puppet.lab",
             "path" : "DC=puppet,DC=lab",
+            "local_groups" : {
+                "sudoers" : ["admins_t0"],
+                "ssh" : ["admins_t1", "admins_t0"]
+            },
             "vulns": ["directory", "ftp", "files", "sudo"],
 	    "vulns_vars": {
                 "directory": {

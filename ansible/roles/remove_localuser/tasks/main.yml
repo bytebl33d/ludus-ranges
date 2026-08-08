@@ -1,0 +1,9 @@
+- name: Remove ludus localuser on Windows
+  ansible.windows.win_user:
+    name: "localuser"
+    state: absent
+  become: yes
+  become_method: runas
+  become_user: "{{domain_username}}"
+  vars:
+    ansible_become_pass: "{{domain_password}}"

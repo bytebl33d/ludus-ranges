@@ -27,16 +27,14 @@
     hostname: "{{lab.hosts[dict_key].hostname}}"
 
 - name: "play linux servers AD configuration"
-  hosts: linux_server
+  hosts: linux_domain
   become: true
   become_method: sudo
   roles:
-    - { role: 'linux/add_linux_to_domain', tags: 'linux_server'}
+    - { role: 'linux/add_linux_to_domain', tags: 'linux_domain'}
   vars:
-    sudoers_group:
-      - "Domain\\ Admins"
-    ssh_group:
-      - "Domain\\ Users"
+    sudoers_group: "{{lab.hosts[dict_key].local_groups.sudoers | default([])}}"
+    ssh_group: "{{lab.hosts[dict_key].local_groups.ssh | default([])}}"
     domain: "{{lab.hosts[dict_key].domain}}"
     dc_name: "{{lab.domains[domain].dc}}"
     dc_fqdn: "{{dc_name}}.{{domain}}"

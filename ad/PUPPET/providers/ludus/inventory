@@ -14,9 +14,6 @@ dns_server={{ip_range}}.254
 
 dns_server_forwarder={{ip_range}}.254
 
-ansible_user=localuser
-ansible_password=password
-
 [linux:vars]
 ansible_connection=ssh
 ansible_port=22
