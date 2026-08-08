@@ -16,8 +16,10 @@ This repo contains custom cyber ranges that serve as a Active Directory pentest 
 - PUPPET: A lab with 3 vms and 1 domain, where you learn to operate with the Sliver C2 framework:
   - RBCD
   - Service Hijacking
-  - DACL Permission
+  - DACL Permissions
   - DevOps Infrastructure
+
+- DRACARYS: A challenge with 3 vms and 1 domain.
 
 ## Ludus
 
@@ -40,6 +42,7 @@ $ ludus tamplates build -n win-2025-server-x64-tpm-template
 
 # custom templates
 $ ludus templates add -d packer/ludus/WINSRV2025
+$ ludus templates build -n winsrv2025-x64-hardened-template
 ```
 
 > [!warning]
@@ -48,13 +51,38 @@ $ ludus templates add -d packer/ludus/WINSRV2025
 
 ### Range Deployment
 
+Create a new user for the range.
+
 ```bash
-ludus range config get > ludus-range-default.yml
-ludus range config set -f ludus-range-default.yml
-ludus range deploy --user <USER>
+ludus users add -i LAB -n LABUSER --url https://127.0.0.1:8081
+```
+
+Set the active lab config and deploy the lab.
+
+```bash
+$ ludus range config set -f ad/EXAMPLE/providers/ludus/config.yml --user <USER>
+$ ludus range deploy --user <USER>
+
+$ ludus range status --user <USER>
++---------+---------------+------------------+---------------+-------------------+-----------------+
+| USER ID | RANGE NETWORK | LAST DEPLOYMENT  | NUMBER OF VMS | DEPLOYMENT STATUS | TESTING ENABLED |
++---------+---------------+------------------+---------------+-------------------+-----------------+
+|  DRAC   |  10.5.0.0/16  | 2026-08-08 13:25 |       4       |      SUCCESS      |      FALSE      |
++---------+---------------+------------------+---------------+-------------------+-----------------+
++------------+--------------------------+-------+-------------+
+| PROXMOX ID |         VM NAME          | POWER |     IP      |
++------------+--------------------------+-------+-------------+
+|    106     | DRAC-router-debian12-x64 |  On   | 10.5.10.254 |
+|    107     | DRAC-DC01                |  On   | 10.5.10.10  |
+|    108     | DRAC-SRV01               |  On   | 10.5.10.11  |
+|    110     | DRAC-LX01                |  On   | 10.5.10.12  |
++------------+--------------------------+-------+-------------+
 ```
 
 ### Ansible Provisioning
+
+> [!note]
+> Update the `globalsettings.ini` file and replace `CHANGE_ME` with the given ludus ip range from the range deployment output (e.g. `10.5.10`). 
 
 Example command to run the playbook for the NHA lab:
 

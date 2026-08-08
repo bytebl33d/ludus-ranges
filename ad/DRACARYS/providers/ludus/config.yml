@@ -1,0 +1,35 @@
+ludus:
+  - vm_name: "{{ range_id }}-DC01"
+    hostname: "{{ range_id }}-DC01"
+    template: winsrv2025-x64-hardened-template
+    vlan: 10
+    ip_last_octet: 10
+    ram_gb: 6
+    cpus: 2
+    windows:
+      sysprep: true
+  - vm_name: "{{ range_id }}-SRV01"
+    hostname: "{{ range_id }}-SRV01"
+    template: winsrv2025-x64-hardened-template
+    vlan: 10
+    ip_last_octet: 11
+    ram_gb: 6
+    cpus: 2
+    windows:
+      sysprep: true
+  - vm_name: "{{ range_id }}-LX01"
+    hostname: "{{ range_id }}-LX01"
+    template: ubuntu-24.04-x64-server-template
+    vlan: 10
+    ip_last_octet: 12
+    ram_gb: 2
+    cpus: 2
+    linux: true
+
+router:
+  vm_name: "{{ range_id }}-router-debian12-x64"
+  hostname: "{{ range_id }}-router"
+  template: debian-12-x64-server-template
+  ram_gb: 2
+  ram_min_gb: 1
+  cpus: 2

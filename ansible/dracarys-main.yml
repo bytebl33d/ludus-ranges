@@ -1,0 +1,22 @@
+---
+
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../ad/{{domain_name}}/data/"
+  tags: 'data'
+
+- import_playbook: build.yml
+
+- import_playbook: ad-servers.yml
+- import_playbook: ad-parent_domain.yml
+- import_playbook: ad-members.yml
+- import_playbook: ad-data.yml
+- import_playbook: ad-relations.yml
+- import_playbook: ad-acl.yml
+- import_playbook: klink.yml
+- import_playbook: keepass.yml
+- import_playbook: security.yml
+- import_playbook: vulnerabilities.yml
+- import_playbook: reboot.yml
+- import_playbook: glpi.yml
