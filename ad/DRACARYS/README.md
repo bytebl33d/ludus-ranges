@@ -1,65 +1,66 @@
 # DRACARYS
 
-![DRACARYS](../../docs/img/dracarys_logo.png)
-
 - DRACARYS is written as a training challenge where GOAD was written as a lab with a maximum of vulns.
 - You should find your way in to get domain admin on the domain dracarys.lab
-- Using vagrant user is prohibited of course ^^
-- Starting point is on lx01 : `<ip_range>.12`
+- Starting point is on lx01 : `<IP_RANGE>.12`
 - Obviously do not cheat by looking at the passwords and flags in the recipe files, the lab must start without user to full compromise. 
-- If you use goad previously your ansible requirements may not be up to date. Be sure to do this before the install:
+
+## Setup
 
 ```bash
-source ~/.goad/.venv/bin/activate
-cd ~/GOAD/ansible
-
-# if you python is >=3.11
-ansible-galaxy install -r requirements_311.yml 
-# if you got a python <3.10
-ansible-galaxy install -r requirements.yml 
+git clone https://github.com/bytebl33d/cyber-ranges.git
+cd cyber-ranges/DRACARYS
 ```
 
-- Install :
+### (Optionally) Create a new user
 
 ```bash
-./goad.sh -t install -l DRACARYS -p virtualbox
+ludus user add --name DRACARYS --userid DRAC --url https://127.0.0.1:8081
 ```
 
-or
+### Range deployment
 
 ```bash
-./goad.sh
-> set_lab DRACARYS
-> set_provider <your_provider>
-> set_iprange 192.168.56  # select the one you want and you can skip this with ludus
-> install
+ludus templates add -d packer/ludus/WINSRV2025
+ludus templates build -n winsrv2025-x64-hardened-template
+ludus templates build -n ubuntu-24.04-x64-server-template
+
+ludus range config set -f ad/DRACARYS/providers/ludus/config.yml --user DRAC
+ludus range deploy --user DRAC
 ```
 
-- Once install finish disable vagrant user to avoid using it :
+### Ansible Provisioning
+
+Change the workspace inventory to reflect the correct IP addresses and run the ansible playbooks:
 
 ```bash
-./goad.sh
-> load <instance_id>
-> disable_vagrant
+# change inventory IPs
+$ vi workspace/inventory
+
+# install the required collections and roles
+$ ansible-galaxy collection install ansible.windows
+$ ansible-galaxy collection install community.general
+$ ansible-galaxy collection install community.windows
+$ ansible-galaxy role install geerlingguy.mysql
+
+$ cd ansible
+$ ansible-playbook -i ../ad/DRACARYS/data/inventory -i ../ad/DRACARYS/providers/ludus/inventory -i ../globalsettings.ini dracarys-main.yml
 ```
 
-- Now do a reboot of all the machine to avoid unintended secrets stored : 
+## Connect
 
-```bash
-> stop
-> start
+```bash 
+$ ludus user wireguard --user DRAC | tee ludus-wg.conf
+[Interface]
+PrivateKey = <PRIVATE_KEY>
+Address = 198.51.100.5/32
+
+[Peer]
+PublicKey = <PUBLIC_KEY>
+Endpoint = 192.168.20.10:51820
+AllowedIPs = 10.5.0.0/16, 198.51.100.1/32
+PersistentKeepalive = 25
+
+# locally
+$ wg-quick up ./ludus-wg.conf
 ```
-
-And you are ready to play ! :)
-
-- If you need to re-enable vagrant
-
-```bash
-> load <instance_id>
-> enable_vagrant
-```
-
-- If you want to create a write up of the chall, no problem, have fun. Please ping me on X (@M4yFly) or Discord, i will be happy to read it :)
-
-!!! tip
-    Be sure to get your arsenal up to date

@@ -7,8 +7,8 @@ You are tasked with performing a red team engagement on Puppet Inc. The company 
 ## Setup
 
 ```bash
-git clone https://github.com/bytebl33d/ludus-ranges.git
-cd ludus-ranges/NHA
+git clone https://github.com/bytebl33d/cyber-ranges.git
+cd cyber-ranges/NHA
 ```
 
 ### (Optionally) Create a new user
