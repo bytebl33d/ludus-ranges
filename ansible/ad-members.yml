@@ -36,10 +36,25 @@
     sudoers_group: "{{lab.hosts[dict_key].local_groups.sudoers | default([])}}"
     ssh_group: "{{lab.hosts[dict_key].local_groups.ssh | default([])}}"
     domain: "{{lab.hosts[dict_key].domain}}"
-    dc_name: "{{lab.domains[domain].dc}}"
+    dc_key: "{{lab.domains[domain].dc}}"
+    dc_name: "{{lab.hosts[dc_key].hostname}}"
     dc_fqdn: "{{dc_name}}.{{domain}}"
     hostname: "{{lab.hosts[dict_key].hostname}}"
-    dc_ip: "{{ hostvars[dc_name]['ansible_host'] }}"
+    dc_ip: "{{hostvars[dc_key].ansible_host}}"
     domain_username: "{{admin_user}}"
     domain_password: "{{lab.domains[domain].domain_password}}"
 
+- name: Setup DNS records for linux machines on all domain controllers
+  hosts: dc
+  tasks:
+    - name: Add DNS record for each linux_domain machine
+      include_role:
+        name: add_dns_record
+      vars:
+        domain: "{{ lab.hosts[item].domain }}"
+        record_name: "{{ lab.hosts[item].hostname }}"
+        record_type: "A"
+        record_value: "{{ hostvars[item].ansible_host }}"
+      loop: "{{ groups['linux_domain'] }}"
+      loop_control:
+        loop_var: item
