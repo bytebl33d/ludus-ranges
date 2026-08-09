@@ -1,0 +1,15 @@
+# Copy this file to variables.pkrvars.hcl and fill in your values.
+# Run: packer build -var-file=variables.pkrvars.hcl .
+
+iso_storage_pool = "local"
+
+ansible_home        = "/opt/ludus/ansible"
+ludus_nat_interface = "vmbr0"
+
+vm_name      = "ubuntu-24.04-x64-server-hardened-template"
+vm_disk_size = "20G"
+vm_memory    = "2048"
+vm_cpu_cores = "1"
+
+ssh_username = "sysadmin"
+ssh_password = "MyStr0ng!Pass"

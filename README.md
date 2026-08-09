@@ -20,6 +20,10 @@ This repo contains custom cyber ranges that serve as a Active Directory pentest 
   - DevOps Infrastructure
 
 - DRACARYS: A challenge with 3 vms and 1 domain.
+  - GLPI Exploitation
+  - Kerberos Dollar Ticket Attack
+  - Ghost SPN Jacking
+  - KeePass Exploitation
 
 ## Ludus
 
@@ -60,29 +64,29 @@ ludus users add -i LAB -n LABUSER --url https://127.0.0.1:8081
 Set the active lab config and deploy the lab.
 
 ```bash
-$ ludus range config set -f ad/EXAMPLE/providers/ludus/config.yml --user <USER>
-$ ludus range deploy --user <USER>
+$ ludus range config set -f ad/EXAMPLE/providers/ludus/config.yml --user LAB
+$ ludus range deploy --user LAB
 
-$ ludus range status --user <USER>
+$ ludus range status --user LAB
 +---------+---------------+------------------+---------------+-------------------+-----------------+
 | USER ID | RANGE NETWORK | LAST DEPLOYMENT  | NUMBER OF VMS | DEPLOYMENT STATUS | TESTING ENABLED |
 +---------+---------------+------------------+---------------+-------------------+-----------------+
-|  DRAC   |  10.5.0.0/16  | 2026-08-08 13:25 |       4       |      SUCCESS      |      FALSE      |
+|   LAB   |  10.5.0.0/16  | 2026-08-08 13:25 |       4       |      SUCCESS      |      FALSE      |
 +---------+---------------+------------------+---------------+-------------------+-----------------+
 +------------+--------------------------+-------+-------------+
 | PROXMOX ID |         VM NAME          | POWER |     IP      |
 +------------+--------------------------+-------+-------------+
-|    106     | DRAC-router-debian12-x64 |  On   | 10.5.10.254 |
-|    107     | DRAC-DC01                |  On   | 10.5.10.10  |
-|    108     | DRAC-SRV01               |  On   | 10.5.10.11  |
-|    110     | DRAC-LX01                |  On   | 10.5.10.12  |
+|    106     | LAB-router-debian12-x64  |  On   | 10.5.10.254 |
+|    107     | LAB-DC01                 |  On   | 10.5.10.10  |
+|    108     | LAB-SRV01                |  On   | 10.5.10.11  |
+|    110     | LAB-LX01                 |  On   | 10.5.10.12  |
 +------------+--------------------------+-------+-------------+
 ```
 
 ### Ansible Provisioning
 
 > [!note]
-> Update the `globalsettings.ini` file and replace `CHANGE_ME` with the given ludus ip range from the range deployment output (e.g. `10.5.10`). 
+> Update the `globalsettings.ini` file and replace `CHANGE_ME` with the given ludus ip range from the range deployment output (e.g. `10.5.10`).
 
 Example command to run the playbook for the NHA lab:
 

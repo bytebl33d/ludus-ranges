@@ -1,5 +1,5 @@
 
-# --- Variables ---
+# Variables
 
 variable "proxmox_url" {
   type = string
@@ -52,7 +52,7 @@ variable "ludus_nat_interface" {
   type = string
 }
 
-# --- Template variables ---
+# Template variables
 
 variable "iso_checksum" {
   type    = string

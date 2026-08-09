@@ -16,4 +16,3 @@ iso_checksum = "sha256:2866105ea8905101f47e2d9b36c5533e0d8c3af9519e4342eddbdae75
 
 winrm_username = "Administrator"
 winrm_password = "MyStr0ng!Pass"
-
